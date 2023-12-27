@@ -56,7 +56,7 @@ class Client {
             }
             this.ws.send(JSON.stringify(payload))
         }
-        
+
         this.ws.connect()
 
         this.ws.onMessage = (message) => {
@@ -66,7 +66,7 @@ class Client {
         this.ws.onError = (error) => {
             ChatLib.chat(`An error occured: ${error}`)
         }
-        
+
         this.heartbeat = register("step", () => {
             if (!this.ready) return
             this.ws.send(JSON.stringify({ "op": 1, "d": this.s }))
@@ -121,7 +121,7 @@ class Client {
                 });
                 this.emit("ready", this.user);
                 break;
-            
+
             case "GUILD_CREATE":
                 this.user.guilds[json.d.id] = json.d;
                 break;
@@ -129,8 +129,8 @@ class Client {
     }
 
     send_message(message, channel_id) {
-        request({
-            url: `https://discord.com/api/v9/channels/${channel_id}/messages`,
+        let message_payload = {
+            url: `https://discord.com/api/v10/channels/${channel_id}/messages`,
             method: "POST",
             headers: {
                 'Authorization': 'Bot ' + this.BOT_TOKEN,
@@ -139,8 +139,10 @@ class Client {
             body: {
                 "content": message
             }
-        })
+        }
+        request(message_payload)
             .then(function (response) {
+                console.log(response)
                 return response
             })
             .catch(function (error) {
@@ -154,16 +156,16 @@ let client = new Client();
 client.login(BOT_TOKEN);
 
 client.on("message", (message) => {
-    if(message.author.bot) return
+    if (message.author.bot) return
     console.log("A new message was created:", message.content);
     if (message.content === '!ping') {
         // Send back "Pong." to the channel the message was sent in
         message.channel.send('Pong.');
     } else if (message.content === `!server`) {
-		message.channel.send(`This server's name is: ${message.guild.name}\nTotal members: ${message.guild.member_count}`);
-	} else if (message.content === `!user-info`) {
-		message.channel.send(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
-	}
+        message.channel.send(`This server's name is: ${message.guild.name}\nTotal members: ${message.guild.member_count}`);
+    } else if (message.content === `!user-info`) {
+        message.channel.send(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
+    }
 });
 
 client.on("ready", (user) => {

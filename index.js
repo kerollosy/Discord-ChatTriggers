@@ -1,8 +1,51 @@
 import WebSocket from "../WebSocket";
-import request from "../requestV2"
+import axios from "../axios"
 import { TOKEN } from './config.js'
 
+const DISCORD_API_URL = "https://discord.com/api/v10"
 let BOT_TOKEN = TOKEN
+
+class User {
+    constructor(data) {
+        this.id = data.id;
+        this.username = data.username;
+        this.avatar = data.avatar;
+        this.discriminator = data.discriminator;
+        this.bot = data.bot || false;
+    }
+}
+
+class Guild {
+    constructor(data) {
+        Object.assign(this, data);
+    }
+}
+
+class Channel {
+    constructor(data, client) {
+        this.id = data.id;
+        this.type = data.type;
+        this.client = client;
+    }
+
+    send(content) {
+        this.client.send_message(content, this.id);
+    }
+}
+
+class Message {
+    constructor(data, client) {
+        this.id = data.id;
+        this.content = data.content;
+        this.author = new User(data.author);
+        this.channel = new Channel({ id: data.channel_id }, client);
+        this.guild = new Guild(client.user.guilds[data.guild_id]);
+    }
+
+    reply(content) {
+        this.channel.send(content);
+    }
+}
 
 class Client {
     constructor(intents = 3276799) {
@@ -64,13 +107,18 @@ class Client {
         }
 
         this.ws.onError = (error) => {
-            ChatLib.chat(`An error occured: ${error}`)
+            console.log(`An error occured: ${error}`)
+            ChatLib.chat(`&eAn error occured: &c${error}&r`)
         }
 
         this.heartbeat = register("step", () => {
             if (!this.ready) return
             this.ws.send(JSON.stringify({ "op": 1, "d": this.s }))
         })
+
+        register("gameUnload", () => {
+            client.ws.close()
+        })        
     }
 
     messageHandler(message) {
@@ -100,17 +148,8 @@ class Client {
 
         switch (t) {
             case "MESSAGE_CREATE":
-                console.log(message)
-                this.emit("message", {
-                    ...json.d,
-                    channel: {
-                        send: (content) => {
-                            this.send_message(content, json.d.channel_id)
-                        }
-                    },
-                    guild: this.user.guilds[json.d.guild_id],
-                    author: json.d.author
-                });
+                let msg = new Message(json.d, this);
+                this.emit("message", msg);
                 break;
 
             case "READY":
@@ -130,8 +169,7 @@ class Client {
 
     send_message(message, channel_id) {
         let message_payload = {
-            url: `https://discord.com/api/v10/channels/${channel_id}/messages`,
-            method: "POST",
+            url: `${DISCORD_API_URL}/channels/${channel_id}/messages`,
             headers: {
                 'Authorization': 'Bot ' + this.BOT_TOKEN,
                 "User-Agent": "DiscordBot (www.chattriggers.com, 1.0.0)"
@@ -140,13 +178,12 @@ class Client {
                 "content": message
             }
         }
-        request(message_payload)
+        axios.post(message_payload)
             .then(function (response) {
-                console.log(response)
-                return response
+                return new Message(response.data, this)
             })
             .catch(function (error) {
-                ChatLib.chat(`An error occured while sending message "${message}": ${error}`)
+                ChatLib.chat(`&eAn error occured while sending message "&a${message}&e": &c${error}&r`)
                 console.log(`An error occured while sending message "${message}": ${error}`)
             })
     }
@@ -157,6 +194,7 @@ client.login(BOT_TOKEN);
 
 client.on("message", (message) => {
     if (message.author.bot) return
+    // console.log(message)
     console.log("A new message was created:", message.content);
     if (message.content === '!ping') {
         // Send back "Pong." to the channel the message was sent in
@@ -164,10 +202,11 @@ client.on("message", (message) => {
     } else if (message.content === `!server`) {
         message.channel.send(`This server's name is: ${message.guild.name}\nTotal members: ${message.guild.member_count}`);
     } else if (message.content === `!user-info`) {
-        message.channel.send(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
+        message.reply(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
     }
 });
 
 client.on("ready", (user) => {
     console.log("The client is ready. User:", user.username);
 });
+

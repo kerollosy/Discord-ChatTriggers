@@ -1,0 +1,11 @@
+{
+	"name": "Discord.mc",
+	"creator": "SIRENCE",
+	"version": "1.0.0",
+	"description": "Discord",
+	"entry": "index.js",
+	"requires": [
+		"WebSocket",
+		"requestV2"
+	]
+}

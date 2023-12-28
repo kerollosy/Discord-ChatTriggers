@@ -1,19 +1,17 @@
 import WebSocket from "../WebSocket";
 import axios from "../axios"
 import { Message } from "./structures/Message";
-
-const DISCORD_API_URL = "https://discord.com/api/v10"
+import { GATEWAY_URL, DISCORD_API_URL } from "./util/Constants";
 
 
 export class Client {
-    constructor(intents = 3276799) {
-        const GATEWAY_URL = "wss://gateway.discord.gg/?v=10&encoding=json"
+    constructor(options = {}) {
         this.ws = new WebSocket(GATEWAY_URL)
-        this.intents = intents
+        this.token = options.token || null
+        this.intents = options.intents || 3276799
         this.ready = false
         this.heartbeat_interval = null
         this.s = null
-        this.BOT_TOKEN = null
 
         this.user = {
             username: null,
@@ -41,12 +39,12 @@ export class Client {
 
 
     login(token) {
-        this.BOT_TOKEN = token
+        this.token = token
         this.ws.onOpen = () => {
             let payload = {
                 "op": 2,
                 "d": {
-                    "token": this.BOT_TOKEN,
+                    "token": this.token,
                     "intents": this.intents,
                     "properties": {
                         "os": 'linux',
@@ -75,7 +73,7 @@ export class Client {
         })
 
         register("gameUnload", () => {
-            this.ws.close()
+            client.ws.close()
         })        
     }
 
@@ -129,7 +127,7 @@ export class Client {
         let message_payload = {
             url: `${DISCORD_API_URL}/channels/${channel_id}/messages`,
             headers: {
-                'Authorization': 'Bot ' + this.BOT_TOKEN,
+                'Authorization': 'Bot ' + this.token,
                 "User-Agent": "DiscordBot (www.chattriggers.com, 1.0.0)"
             },
             body: {

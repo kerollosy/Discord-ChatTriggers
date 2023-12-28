@@ -1,4 +1,10 @@
 events/
+util/
+handlers/
+managers/
+actions/
+beta/
+
 cache.js
 config.js
 tempCodeRunnerFile.js

@@ -1,51 +1,11 @@
 import WebSocket from "../WebSocket";
 import axios from "../axios"
 import { TOKEN } from './config.js'
+import { Message } from "./structures/Message";
 
 const DISCORD_API_URL = "https://discord.com/api/v10"
 let BOT_TOKEN = TOKEN
 
-class User {
-    constructor(data) {
-        this.id = data.id;
-        this.username = data.username;
-        this.avatar = data.avatar;
-        this.discriminator = data.discriminator;
-        this.bot = data.bot || false;
-    }
-}
-
-class Guild {
-    constructor(data) {
-        Object.assign(this, data);
-    }
-}
-
-class Channel {
-    constructor(data, client) {
-        this.id = data.id;
-        this.type = data.type;
-        this.client = client;
-    }
-
-    send(content) {
-        this.client.send_message(content, this.id);
-    }
-}
-
-class Message {
-    constructor(data, client) {
-        this.id = data.id;
-        this.content = data.content;
-        this.author = new User(data.author);
-        this.channel = new Channel({ id: data.channel_id }, client);
-        this.guild = new Guild(client.user.guilds[data.guild_id]);
-    }
-
-    reply(content) {
-        this.channel.send(content);
-    }
-}
 
 class Client {
     constructor(intents = 3276799) {
@@ -203,6 +163,8 @@ client.on("message", (message) => {
         message.channel.send(`This server's name is: ${message.guild.name}\nTotal members: ${message.guild.member_count}`);
     } else if (message.content === `!user-info`) {
         message.reply(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
+    } else if (message.content === `!avatar`) {
+        message.reply(message.author.avatarURL);
     }
 });
 

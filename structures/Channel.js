@@ -11,7 +11,7 @@ export class Channel {
         }
     }
 
-    send(content) {
-        this.client.send_message(content, this.id);
+    send(content, options = {}) {
+        this.client.send_message(content, this.id, options);
     }
 }

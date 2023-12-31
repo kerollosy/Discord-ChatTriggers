@@ -30,7 +30,7 @@ export class Message {
         }
     }
 
-    reply(content) {
-        this.channel.send(content);
+    reply(content, options = {}) {
+        this.channel.send(content, options);
     }
 }

@@ -28,8 +28,8 @@ export class Client extends EventEmitter {
                     "intents": this.intents,
                     "properties": {
                         "os": 'linux',
-                        "browser": "chrome",
-                        "device": "device"
+                        "browser": "Discord.mc",
+                        "device": "Discord.mc"
                     }
                 }
             }
@@ -44,7 +44,6 @@ export class Client extends EventEmitter {
 
         this.ws.onError = (error) => {
             console.log(`An error occured: ${error}`)
-            ChatLib.chat(`&eAn error occured: &c${error}&r`)
         }
 
         this.heartbeat = register("step", () => {
@@ -62,7 +61,6 @@ export class Client extends EventEmitter {
         let op = json.op;
         let t = json.t;
         this.s = json.s;
-        // console.log(message)
 
         switch (op) {
             // 10: Hello
@@ -77,7 +75,6 @@ export class Client extends EventEmitter {
                 break;
             // 1: Heartbeat
             case 1:
-                ChatLib.chat(json);
                 this.ws.send(JSON.stringify({ "op": 1, "d": this.s }));
                 break;
         }
@@ -102,7 +99,7 @@ export class Client extends EventEmitter {
         }
     }
 
-    send_message(message, channel_id) {
+    send_message(message, channel_id, options = {}) {
         let message_payload = {
             url: `${DISCORD_API_URL}/channels/${channel_id}/messages`,
             headers: {
@@ -110,7 +107,8 @@ export class Client extends EventEmitter {
                 "User-Agent": "DiscordBot (www.chattriggers.com, 1.0.0)"
             },
             body: {
-                "content": message
+                "content": message,
+                "tts": options.tts || false
             }
         }
         axios.post(message_payload)
@@ -118,7 +116,6 @@ export class Client extends EventEmitter {
                 return new Message(response.data, this)
             })
             .catch(function (error) {
-                ChatLib.chat(`&eAn error occured while sending message "&a${message}&e": &c${error}&r`)
                 console.log(`An error occured while sending message "${message}": ${error}`)
             })
     }

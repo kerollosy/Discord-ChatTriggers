@@ -17,12 +17,15 @@ client.on("message", (message) => {
         message.channel.send(`This server's name is: ${message.guild.name}\nTotal members: ${message.guild.member_count}`);
     } else if (message.content === `!user-info`) {
         message.reply(`Your username: ${message.author.username}\nYour ID: ${message.author.id}`);
-    } else if (message.content === `!avatar`) {
-        message.reply(message.author.avatarURL);
+    } else if (message.content.startsWith(`!avatar`)) {
+        if (message.mentions.length === 0) {
+            message.reply(message.author.username + "'s avatar: " + message.author.avatarURL);
+            return;
+        }
+        message.reply(message.mentions[0].username + "'s avatar: " + message.mentions[0].avatarURL);
     }
 });
 
 client.on("ready", (user) => {
     console.log("The client is ready. User:", user.username);
 });
-

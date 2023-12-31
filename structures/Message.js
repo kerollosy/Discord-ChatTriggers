@@ -1,4 +1,3 @@
-// Description: This file contains the Message structure.
 import { User } from "./User";
 import { Channel } from "./Channel";
 import { Guild } from "./Guild";
@@ -15,11 +14,20 @@ export class Message {
         this.timestamp = Date.parse(data.timestamp);
         this.id = data.id;
         this.content = data.content;
-        // this.mentions = [];
 
-        // data.mentions.forEach(mention => {
-        //     this.mentions.push(mention);
-        // })
+        if (data.edited_timestamp)
+            this.editedTimestamp = Date.parse(data.edited_timestamp);
+        this.mentions = [];
+
+        data.mentions.forEach(mention => {
+            this.mentions.push(new User(mention));
+        })
+
+        for (let key in data) {
+            if (!this.hasOwnProperty(key)) {
+                this[key] = data[key];
+            }
+        }
     }
 
     reply(content) {

@@ -8,10 +8,17 @@ export class User {
         this.discriminator = data.discriminator;
         this.avatar = data.avatar;
         this.bot = data.bot || false;
+        this.guilds = {}
+
+        for (let key in data) {
+            if (!this.hasOwnProperty(key)) {
+                this[key] = data[key];
+            }
+        }
     }
 
-    get avatarURL(){
-        if(!this.avatar) {
+    get avatarURL() {
+        if (!this.avatar) {
             return null
         } else {
             return `${DISCORD_CDN_URL}/avatars/${this.id}/${this.avatar}.png`

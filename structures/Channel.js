@@ -3,6 +3,12 @@ export class Channel {
         this.id = data.id;
         this.type = data.type;
         this.client = client;
+
+        for (let key in data) {
+            if (!this.hasOwnProperty(key)) {
+                this[key] = data[key];
+            }
+        }
     }
 
     send(content) {

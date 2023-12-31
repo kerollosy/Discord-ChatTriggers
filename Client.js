@@ -2,10 +2,12 @@ import WebSocket from "../WebSocket";
 import axios from "../axios"
 import { Message } from "./structures/Message";
 import { GATEWAY_URL, DISCORD_API_URL } from "./util/Constants";
+import { EventEmitter } from "./util/EventEmitter";
 
 
-export class Client {
+export class Client extends EventEmitter {
     constructor(options = {}) {
+        super()
         this.ws = new WebSocket(GATEWAY_URL)
         this.token = options.token || null
         this.intents = options.intents || 3276799
@@ -20,20 +22,6 @@ export class Client {
             discriminator: null,
             email: null,
             guilds: {}
-        }
-        this.events = {}
-    }
-
-    on(event, listener) {
-        if (!this.events[event]) {
-            this.events[event] = [];
-        }
-        this.events[event].push(listener);
-    }
-
-    emit(event, ...args) {
-        if (this.events[event]) {
-            this.events[event].forEach(listener => listener(...args));
         }
     }
 
@@ -73,8 +61,8 @@ export class Client {
         })
 
         register("gameUnload", () => {
-            client.ws.close()
-        })        
+            this.ws.close()
+        })
     }
 
     messageHandler(message) {

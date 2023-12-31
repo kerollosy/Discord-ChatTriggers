@@ -3,6 +3,7 @@ import axios from "../axios"
 import { Message } from "./structures/Message";
 import { GATEWAY_URL, DISCORD_API_URL } from "./util/Constants";
 import { EventEmitter } from "./util/EventEmitter";
+import { User } from "./structures/User";
 
 
 export class Client extends EventEmitter {
@@ -14,15 +15,6 @@ export class Client extends EventEmitter {
         this.ready = false
         this.heartbeat_interval = null
         this.s = null
-
-        this.user = {
-            username: null,
-            id: null,
-            avatar: null,
-            discriminator: null,
-            email: null,
-            guilds: {}
-        }
     }
 
 
@@ -97,8 +89,7 @@ export class Client extends EventEmitter {
                 break;
 
             case "READY":
-                this.user.id = json.d.user.id;
-                this.user.username = json.d.user.username;
+                this.user = new User(json.d.user, this)
                 json.d.guilds.forEach(guild => {
                     this.user.guilds[guild.id] = { unavailabe: true }
                 });

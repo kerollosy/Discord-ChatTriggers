@@ -3,7 +3,7 @@
 	"creator": "SIRENCE",
 	"version": "1.0.0",
 	"description": "Interact with Discord from Minecraft",
-	"entry": "example.js",
+	"entry": "Client.js",
 	"requires": [
 		"WebSocket",
 		"axios"

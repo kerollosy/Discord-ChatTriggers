@@ -10,7 +10,7 @@ import { MessageHandler } from "./util/MessageHandler";
  * Represents a client that connects to the Discord API.
  * @extends EventEmitter
  */
-export class Client extends EventEmitter {
+export default class Client extends EventEmitter {
     /**
      * Creates a new Client instance.
      * @param {Object} options - The options for the client.

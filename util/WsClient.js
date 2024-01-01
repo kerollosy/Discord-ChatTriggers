@@ -48,7 +48,7 @@ export class WsClient extends EventEmitter {
         }
 
         this.ws.onError = (error) => {
-            console.log(`An error occured: ${error}`)
+            console.error(`An error occured: ${error}`)
         }
     }
 

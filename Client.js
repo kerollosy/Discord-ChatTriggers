@@ -107,7 +107,7 @@ export class Client extends EventEmitter {
                 return new Message(response.data, this)
             })
             .catch(function (error) {
-                console.log(`An error occured while sending message "${message}": ${JSON.stringify(error)}`)
+                console.error(`An error occured while sending message "${message}": ${JSON.stringify(error)}`)
             })
     }
 }

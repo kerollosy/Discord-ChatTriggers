@@ -2,10 +2,10 @@
 	"name": "Discord.mc",
 	"creator": "SIRENCE",
 	"version": "1.0.0",
-	"description": "Discord",
+	"description": "Interact with Discord from Minecraft",
 	"entry": "index.js",
 	"requires": [
 		"WebSocket",
-		"requestV2"
+		"axios"
 	]
 }

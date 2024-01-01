@@ -1,7 +1,7 @@
-import Client from "./index";
+import DiscordClient from "./index";
 const TOKEN = "DISCORD_BOT_TOKEN";
 
-let client = new Client();
+let client = new DiscordClient();
 
 client.on("message", (message) => {
     if (message.author.bot) return

@@ -1,14 +1,11 @@
-import { Client } from "./Client";
-const TOKEN = "token";
-
+import Client from "./index";
+const TOKEN = "DISCORD_BOT_TOKEN";
 
 let client = new Client();
 
-client.login(TOKEN);
-
 client.on("message", (message) => {
     if (message.author.bot) return
-    
+
     if (message.content === '!ping') {
         message.channel.send('Pong.');
     } else if (message.content === `!server`) {
@@ -24,7 +21,8 @@ client.on("message", (message) => {
     }
 });
 
-
 client.on("ready", (user) => {
     console.log("The client is ready. User:", user.username);
 });
+
+client.login(TOKEN);

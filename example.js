@@ -8,7 +8,7 @@ client.login(TOKEN);
 
 client.on("message", (message) => {
     if (message.author.bot) return
-        console.log("A new message was created:", message.content);
+    
     if (message.content === '!ping') {
         message.channel.send('Pong.');
     } else if (message.content === `!server`) {

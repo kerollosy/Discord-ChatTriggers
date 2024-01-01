@@ -2,11 +2,22 @@ import { Message } from "../structures/Message";
 import { User } from "../structures/User";
 
 
+/**
+ * Handles incoming messages from the Discord Gateway and dispatches corresponding events.
+ */
 export class MessageHandler {
+    /**
+     * Creates a new MessageHandler instance.
+     * @param {Client} client - The Discord bot client associated with the message handler.
+     */
     constructor(client) {
         this.client = client;
     }
 
+    /**
+     * Handles an incoming message from the Discord Gateway and dispatches events accordingly.
+     * @param {string} message - The JSON-formatted message received from the Gateway.
+     */
     handle(message) {
         let json = JSON.parse(message);
         let op = json.op;
@@ -22,7 +33,7 @@ export class MessageHandler {
                 break;
             // 11: Heartbeat ACK
             case 11:
-                console.log("Heartbeating..");
+                // console.log("Heartbeating..");
                 break;
             // 1: Heartbeat
             case 1:

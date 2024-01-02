@@ -6,6 +6,6 @@
 	"entry": "index.js",
 	"requires": [
 		"WebSocket",
-		"axios"
+		"requestV2"
 	]
 }

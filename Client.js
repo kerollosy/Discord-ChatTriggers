@@ -1,4 +1,4 @@
-import axios from "../axios"
+import request from "../requestV2"
 import { Message } from "./structures/Message";
 import { DISCORD_API_URL } from "./util/Constants";
 import { EventEmitter } from "./util/EventEmitter";
@@ -93,6 +93,7 @@ export class Client extends EventEmitter {
     send_message(message, channel_id, options = {}) {
         let message_payload = {
             url: `${DISCORD_API_URL}/channels/${channel_id}/messages`,
+            method: 'POST',
             headers: {
                 'Authorization': 'Bot ' + this.token,
                 "User-Agent": "DiscordBot (www.chattriggers.com, 1.0.0)"
@@ -102,7 +103,7 @@ export class Client extends EventEmitter {
                 "tts": options.tts || false
             }
         }
-        axios.post(message_payload)
+        request(message_payload)
             .then(function (response) {
                 return new Message(response.data, this)
             })

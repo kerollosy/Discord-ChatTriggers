@@ -29,7 +29,8 @@ export class Message {
          * The guild (server) where the message was sent.
          * @type {Guild}
          */
-        this.guild = new Guild(client.user.guilds[data.guild_id]);
+        if (data.guild_id)
+            this.guild = new Guild(this.client.user.guilds[data.guild_id]);
 
         /**
          * The author of the message.
@@ -86,9 +87,11 @@ export class Message {
          */
         this.mentions = [];
 
-        data.mentions.forEach(mention => {
-            this.mentions.push(new User(mention));
-        })
+        if (data.mentions) {
+            data.mentions.forEach(mention => {
+                this.mentions.push(new User(mention));
+            })
+        }
 
         // Copy additional properties from data to the message object.
         for (let key in data) {

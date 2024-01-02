@@ -101,11 +101,12 @@ export class Client extends EventEmitter {
             body: {
                 "content": message,
                 "tts": options.tts || false
-            }
+            },
+            json: true
         }
         request(message_payload)
             .then(function (response) {
-                return new Message(response.data, this)
+                return new Message(response, this)
             })
             .catch(function (error) {
                 console.error(`An error occured while sending message "${message}": ${JSON.stringify(error)}`)

@@ -1,9 +1,10 @@
 import request from "../requestV2"
 import { Message } from "./structures/Message";
-import { DISCORD_API_URL } from "./util/Constants";
+import { ENDPOINTS } from "./util/Constants";
 import { EventEmitter } from "./util/EventEmitter";
 import { WsClient } from "./util/WsClient";
 import { MessageHandler } from "./util/MessageHandler";
+import { Payload } from "./util/Payload";
 import { Promise } from "../PromiseV2"
 
 
@@ -27,6 +28,18 @@ export class Client extends EventEmitter {
          * @type {MessageHandler}
          */
         this.messageHandler = new MessageHandler(this)
+
+        /**
+         * An instance of the WsClient for handling communication with the Discord Gateway.
+         * @type {WsClient|null}
+         */
+        this.ws = null
+
+        /**
+         * An instance of Payload for making API request payloads.
+         * @type {Payload|null}
+         */
+        this.payloadCreator = null
 
         /**
          * The bot token for authentication.
@@ -92,10 +105,8 @@ export class Client extends EventEmitter {
 
             this.token = token
 
-            /**
-             * An instance of the WsClient for handling communication with the Discord Gateway.
-             * @type {WsClient}
-             */
+            this.payloadCreator = new Payload(this.token)
+
             this.ws = new WsClient(this.token, this.intents)
             this.ws.connect()
     
@@ -125,19 +136,15 @@ export class Client extends EventEmitter {
      * @returns {Promise<Message>} A Promise that resolves with the sent message if successful.
      */
     send_message(message, channel_id, options = {}) {
-        let message_payload = {
-            url: `${DISCORD_API_URL}/channels/${channel_id}/messages`,
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bot ' + this.token,
-                "User-Agent": "DiscordBot (www.chattriggers.com, 1.0.0)"
-            },
-            body: {
+        let message_payload = this.payloadCreator.create(
+            ENDPOINTS.SEND_MESSAGE(channel_id),
+            'POST', 
+            {
                 "content": message,
                 "tts": options.tts || false
             },
-            json: true
-        }
+            true
+        )
 
         return new Promise((resolve, reject) => {
             request(message_payload)
@@ -159,14 +166,12 @@ export class Client extends EventEmitter {
      * @throws {Error} If an error occurs during the delete message process.
      */
     delete_message(message, options = {}) {
-        let delete_message_payload = {
-            url: `${DISCORD_API_URL}/channels/${message.channel.id}/messages/${message.id}`,
-            method: 'DELETE',
-            headers: {
-                'Authorization': 'Bot ' + this.token,
-                "User-Agent": "DiscordBot (www.chattriggers.com, 1.0.0)"
-            }
-        }
+        let delete_message_payload = this.payloadCreator.create(
+            ENDPOINTS.DELETE_MESSAGE(message.channel.id, message.id),
+            'DELETE', 
+            null, 
+            false
+        )
 
         return new Promise((resolve, reject) => {
             request(delete_message_payload)

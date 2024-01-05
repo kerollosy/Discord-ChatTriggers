@@ -4,6 +4,7 @@ import { DISCORD_API_URL } from "./util/Constants";
 import { EventEmitter } from "./util/EventEmitter";
 import { WsClient } from "./util/WsClient";
 import { MessageHandler } from "./util/MessageHandler";
+import { Promise } from "../PromiseV2"
 
 
 /**
@@ -46,6 +47,18 @@ export class Client extends EventEmitter {
         this.ready = false
 
         /**
+         * The time when the client became ready.
+         * @type {number|null}
+         */
+        this.readyTime = null
+
+        /**
+         * The current state of the client.
+         * @type {string}
+         */
+        this.state = "DISCONNECTED"
+
+        /**
          * The sequence number for the last received message.
          * @type {number|null}
          */
@@ -53,32 +66,53 @@ export class Client extends EventEmitter {
     }
 
     /**
+     * Gets the uptime of the client.
+     * @returns {number|null} The uptime of the client in milliseconds, or null if the client is not ready.
+     */
+    get uptime() {
+        return this.ready ? Date.now() - this.readyTime : null;
+    }
+
+    /**
      * Logs the client in using a token.
      * @param {string} [token] - The token to log in with.
+     * @returns {Promise<string>} A promise that resolves with the token if successful.
      * @throws {Error} If no token is provided.
      */
     login(token = this.token) {
-        if (!token) throw new Error("No token provided");
-        this.token = token
+        return new Promise((resolve, reject) => { 
+            if (!token) {
+               return reject(new Error("No token provided"))
+            }
 
-        /**
-         * An instance of the WsClient for handling communication with the Discord Gateway.
-         * @type {WsClient}
-         */
-        this.ws = new WsClient(this.token, this.intents)
-        this.ws.connect()
+            if(this.state !== "DISCONNECTED") {
+                return reject(new Error("Client is already connected"))
+            }
+            this.state = "CONNECTED"
 
-        this.heartbeat = register("step", () => {
-            if (!this.ready) return
-            this.ws.send(JSON.stringify({ "op": 1, "d": this.s }))
-        })
+            this.token = token
 
-        register("gameUnload", () => {
-            this.ws.close()
-        })
+            /**
+             * An instance of the WsClient for handling communication with the Discord Gateway.
+             * @type {WsClient}
+             */
+            this.ws = new WsClient(this.token, this.intents)
+            this.ws.connect()
+    
+            this.heartbeat = register("step", () => {
+                if (!this.ready) return
+                this.ws.send(JSON.stringify({ "op": 1, "d": this.s }))
+            })
+    
+            register("gameUnload", () => {
+                this.ws.close()
+            })
+    
+            this.ws.on("_message", (message) => {
+                this.messageHandler.handle(message)
+            })
 
-        this.ws.on("_message", (message) => {
-            this.messageHandler.handle(message)
+            return resolve(this.token)
         })
     }
 

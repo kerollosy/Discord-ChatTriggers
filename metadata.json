@@ -6,6 +6,7 @@
 	"entry": "index.js",
 	"requires": [
 		"WebSocket",
-		"requestV2"
+		"requestV2",
+		"PromiseV2"
 	]
 }

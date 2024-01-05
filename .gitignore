@@ -3,6 +3,7 @@ handlers/
 managers/
 actions/
 beta/
+.vscode/
 
 cache.js
 config.js

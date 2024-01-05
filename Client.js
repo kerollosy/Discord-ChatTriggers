@@ -122,7 +122,7 @@ export class Client extends EventEmitter {
      * @param {string} channel_id - The ID of the Discord channel where the message will be sent.
      * @param {Object} options - Additional options for sending the message.
      * @param {boolean} options.tts - Whether the message should be sent as text-to-speech (TTS). Defaults to false.
-     * @returns {Message} A Message object representing the sent message.
+     * @returns {Promise<Message>} A Promise that resolves with the sent message if successful.
      */
     send_message(message, channel_id, options = {}) {
         let message_payload = {
@@ -138,12 +138,46 @@ export class Client extends EventEmitter {
             },
             json: true
         }
-        request(message_payload)
-            .then(function (response) {
-                return new Message(response, this)
-            })
-            .catch(function (error) {
-                console.error(`An error occured while sending message "${message}": ${JSON.stringify(error)}`)
-            })
+
+        return new Promise((resolve, reject) => {
+            request(message_payload)
+                .then(function (response) {
+                    return resolve(new Message(response, this))
+                })
+                .catch(function (error) {
+                    console.error(`An error occured while sending message "${message}": ${JSON.stringify(error)}`)
+                    return reject(error)
+                })
+        })
+    }
+
+    /**
+     * Deletes a message from a Discord channel.
+     * @param {Message} message - The message to be deleted.
+     * @param {Object} options - Additional options for deleting the message.
+     * @returns {Promise<any>} A promise that resolves with the response if the message is successfully deleted.
+     * @throws {Error} If an error occurs during the delete message process.
+     */
+    delete_message(message, options = {}) {
+        let delete_message_payload = {
+            url: `${DISCORD_API_URL}/channels/${message.channel.id}/messages/${message.id}`,
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bot ' + this.token,
+                "User-Agent": "DiscordBot (www.chattriggers.com, 1.0.0)"
+            }
+        }
+
+        return new Promise((resolve, reject) => {
+            request(delete_message_payload)
+                .then(function (response) {
+                    console.log(`Deleted message "${message}"`)
+                    return resolve(response)
+                })
+                .catch(function (error) {
+                    console.error(`An error occured while deleting message "${message}": ${JSON.stringify(error)}`)
+                    return reject(error)
+                })
+        })
     }
 }

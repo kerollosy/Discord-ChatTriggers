@@ -110,4 +110,20 @@ export class Message {
     reply(content, options = {}) {
         this.channel.send(content, options);
     }
+
+    /**
+     * Deletes the message.
+     * @returns {Promise<void>} A promise that resolves with the response if the message is successfully deleted.
+     */
+    delete() {
+        return this.client.delete_message(this);
+    }
+    
+    /**
+     * Returns a string representation of the message.
+     * @returns {string} The content of the message.
+     */
+    toString() {
+        return this.content
+    }
 }

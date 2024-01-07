@@ -3,10 +3,10 @@
  */
 export class Guild {
     /**
-     * Creates a new Channel instance.
+     * Creates a new Guild instance.
      * @param {Object} data - The raw data object representing the guild.
      */
-    constructor(data) {
+    constructor(data, client) {
         /**
          * Copies properties from the data object to the guild instance.
          * @type {Object}

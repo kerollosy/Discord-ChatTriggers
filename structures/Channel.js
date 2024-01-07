@@ -9,13 +9,13 @@ export class Channel {
      */
     constructor(data, client) {
         /**
-         * The unique identifier of the user.
+         * The unique identifier of the channel.
          * @type {string}
          */
         this.id = data.id;
 
         /**
-         * The Discord bot client associated with the user.
+         * The Discord bot client associated with the channel.
          * @type {Client}
          */
         this.client = client;

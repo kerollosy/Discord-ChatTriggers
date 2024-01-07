@@ -35,7 +35,7 @@ export class MessageHandler {
                 break;
             // 11: Heartbeat ACK
             case 11:
-                // console.log("Heartbeating..");
+                this.client.emit("debug", "Heartbeat ACK");
                 break;
             // 1: Heartbeat
             case 1:
@@ -56,7 +56,6 @@ export class MessageHandler {
             
             case PACKETS.MESSAGE_DELETE:
                 channel = this.client.channels.get(data.channel_id);
-                console.log(channel.id)
                 if(channel) {
                     let msg = channel.messages.get(data.id);
                     if(msg) {

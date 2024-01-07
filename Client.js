@@ -195,7 +195,6 @@ export class Client extends EventEmitter {
         return new Promise((resolve, reject) => {
             request(delete_message_payload)
                 .then(function (response) {
-                    console.log(`Deleted message "${message}"`)
                     message.channel.messages.delete(message.id)
                     return resolve(response)
                 })

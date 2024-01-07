@@ -3,6 +3,17 @@ import { DISCORD_CDN_URL } from "../util/Constants";
 
 /**
  * Represents a user in Discord.
+ * @example
+ * {
+    "username": "sirence11",
+    "public_flags": 0,
+    "premium_type": 0,
+    "id": "774816281333202944",
+    "global_name": "SIRENCE",
+    "discriminator": "0",
+    "avatar_decoration_data": null,
+    "avatar": "30c5ae09e6674cf72bb4d95b68399e38"
+   }
  */
 export class User {
     /**

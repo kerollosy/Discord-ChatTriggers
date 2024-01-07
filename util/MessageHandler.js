@@ -1,5 +1,6 @@
 import { Message } from "../structures/Message";
 import { User } from "../structures/User";
+import { Guild } from "../structures/Guild";
 import { PACKETS } from "./Constants";
 
 
@@ -44,22 +45,28 @@ export class MessageHandler {
 
         switch (t) {
             case PACKETS.MESSAGE_CREATE:
-                let msg = new Message(data, this.client);
-                this.client.emit("message", msg);
+                let channel = this.client.channels.get(data.channel_id);
+                if (channel) {
+                    let msg = channel.messages.set(data.id, new Message(data, this.client));
+                    this.client.emit("message", msg);
+                } else {
+                    this.client.emit("debug", `Received message for unknown channel ${data.channel_id}`);
+                }
                 break;
 
             case PACKETS.READY:
                 this.client.ready = true;
                 this.client.readyTime = Date.now();
-                this.client.user = new User(data.user, this.client);
+                this.client.user = this.client.users.set(data.id, new User(data.user, this.client));
                 data.guilds.forEach(guild => {
-                    this.client.user.guilds[guild.id] = { unavailabe: true };
+                    this.client.guilds.set(guild.id, { unavailabe: true });
                 });
                 this.client.emit("ready", this.client.user);
+                this.client.emit("debug", `Cached ${this.client.guilds.size} servers`);
                 break;
 
             case PACKETS.GUILD_CREATE:
-                this.client.user.guilds[data.id] = data;
+                this.client.guilds.set(data.id, new Guild(data, this.client));
                 break;
         }
     }

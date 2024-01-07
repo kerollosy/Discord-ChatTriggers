@@ -29,7 +29,6 @@ export class MessageHandler {
             // 10: Hello
             case 10:
                 let heartbeat_interval = data.heartbeat_interval;
-                this.client.ready = true;
                 this.client.heartbeat.setDelay(heartbeat_interval / 1000);
                 break;
             // 11: Heartbeat ACK
@@ -49,6 +48,8 @@ export class MessageHandler {
                 break;
 
             case PACKETS.READY:
+                this.client.ready = true;
+                this.client.readyTime = Date.now();
                 this.client.user = new User(data.user, this.client);
                 data.guilds.forEach(guild => {
                     this.client.user.guilds[guild.id] = { unavailabe: true };

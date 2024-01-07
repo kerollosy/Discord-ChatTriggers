@@ -53,6 +53,22 @@ export class MessageHandler {
                     this.client.emit("debug", `Received message for unknown channel ${data.channel_id}`);
                 }
                 break;
+            
+            case PACKETS.MESSAGE_DELETE:
+                channel = this.client.channels.get(data.channel_id);
+                console.log(channel.id)
+                if(channel) {
+                    let msg = channel.messages.get(data.id);
+                    if(msg) {
+                        channel.messages.delete(data.id);
+                        this.client.emit("messageDelete", msg);
+                    } else {
+                        this.client.emit("debug", `Received delete message for unknown message ${data.id}`);
+                    }
+                } else {
+                    this.client.emit("debug", `Received delete message for unknown channel ${data.channel_id}`);
+                }
+                break;
 
             case PACKETS.READY:
                 this.client.ready = true;

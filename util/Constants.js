@@ -9,3 +9,18 @@ export const ENDPOINTS = {
     SEND_MESSAGE: (id) => `${DISCORD_API_URL}/channels/${id}/messages`,
     DELETE_MESSAGE: (channelId, messageId) => `${DISCORD_API_URL}/channels/${channelId}/messages/${messageId}`,
 }
+
+// https://discord.com/developers/docs/topics/gateway-events
+export const PACKETS = {
+    // https://discord.com/developers/docs/topics/gateway-events#ready
+    READY: "READY",
+
+    // https://discord.com/developers/docs/topics/gateway-events#guild-create
+    GUILD_CREATE: "GUILD_CREATE",
+
+    // https://discord.com/developers/docs/topics/gateway-events#message-create
+    MESSAGE_CREATE: "MESSAGE_CREATE",
+
+    // https://discord.com/developers/docs/topics/gateway-events#message-delete
+    MESSAGE_DELETE: "MESSAGE_DELETE"
+}

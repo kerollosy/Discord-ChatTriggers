@@ -42,12 +42,12 @@ export class MessageHandler {
         }
 
         switch (t) {
-            case "MESSAGE_CREATE":
+            case PACKETS.MESSAGE_CREATE:
                 let msg = new Message(json.d, this.client);
                 this.client.emit("message", msg);
                 break;
 
-            case "READY":
+            case PACKETS.READY:
                 this.client.user = new User(json.d.user, this.client);
                 json.d.guilds.forEach(guild => {
                     this.client.user.guilds[guild.id] = { unavailabe: true };
@@ -55,7 +55,7 @@ export class MessageHandler {
                 this.client.emit("ready", this.client.user);
                 break;
 
-            case "GUILD_CREATE":
+            case PACKETS.GUILD_CREATE:
                 this.client.user.guilds[json.d.id] = json.d;
                 break;
         }

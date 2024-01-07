@@ -1,6 +1,4 @@
 import { User } from "./User";
-import { Channel } from "./Channel";
-import { Guild } from "./Guild";
 
 
 /**
@@ -23,20 +21,19 @@ export class Message {
          * The channel where the message was sent.
          * @type {Channel}
          */
-        this.channel = new Channel({ id: data.channel_id }, client);
+        this.channel = client.channels?.get(data.channel_id);
 
         /**
          * The guild (server) where the message was sent.
          * @type {Guild}
          */
-        if (data.guild_id)
-            this.guild = new Guild(this.client.user.guilds[data.guild_id]);
+        this.guild = client.guilds?.get(data.guild_id);
 
         /**
          * The author of the message.
          * @type {User}
          */
-        this.author = new User(data.author);
+        this.author = client.users?.get(data.author.id);
 
         /**
          * Array of attachments included in the message.
@@ -118,7 +115,7 @@ export class Message {
     delete() {
         return this.client.delete_message(this);
     }
-    
+
     /**
      * Returns a string representation of the message.
      * @returns {string} The content of the message.

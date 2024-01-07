@@ -22,12 +22,13 @@ export class MessageHandler {
         let json = JSON.parse(message);
         let op = json.op;
         let t = json.t;
+        let data = json.d;
         this.client.s = json.s;
 
         switch (op) {
             // 10: Hello
             case 10:
-                let heartbeat_interval = json.d.heartbeat_interval;
+                let heartbeat_interval = data.heartbeat_interval;
                 this.client.ready = true;
                 this.client.heartbeat.setDelay(heartbeat_interval / 1000);
                 break;
@@ -43,20 +44,20 @@ export class MessageHandler {
 
         switch (t) {
             case PACKETS.MESSAGE_CREATE:
-                let msg = new Message(json.d, this.client);
+                let msg = new Message(data, this.client);
                 this.client.emit("message", msg);
                 break;
 
             case PACKETS.READY:
-                this.client.user = new User(json.d.user, this.client);
-                json.d.guilds.forEach(guild => {
+                this.client.user = new User(data.user, this.client);
+                data.guilds.forEach(guild => {
                     this.client.user.guilds[guild.id] = { unavailabe: true };
                 });
                 this.client.emit("ready", this.client.user);
                 break;
 
             case PACKETS.GUILD_CREATE:
-                this.client.user.guilds[json.d.id] = json.d;
+                this.client.user.guilds[data.id] = data;
                 break;
         }
     }

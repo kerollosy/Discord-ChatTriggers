@@ -6,6 +6,7 @@ import { WsClient } from "./util/WsClient";
 import { MessageHandler } from "./util/MessageHandler";
 import { Payload } from "./util/Payload";
 import { Promise } from "../PromiseV2"
+import { Collection } from "./util/Collection";
 
 
 /**
@@ -76,6 +77,24 @@ export class Client extends EventEmitter {
          * @type {number|null}
          */
         this.s = null
+
+        /**
+         * A collection of all users the client is aware of.
+         * @type {Collection<string, User>}
+         */
+        this.users = new Collection()
+
+        /**
+         * A collection of all guilds (servers) the client has access to.
+         * @type {Collection<string, Guild>}
+         */
+        this.guilds = new Collection()
+
+        /**
+         * A collection of all channels the client has access to.
+         * @type {Collection<string, Channel>}
+         */
+        this.channels = new Collection()
     }
 
     /**
@@ -93,12 +112,12 @@ export class Client extends EventEmitter {
      * @throws {Error} If no token is provided.
      */
     login(token = this.token) {
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             if (!token) {
-               return reject(new Error("No token provided"))
+                return reject(new Error("No token provided"))
             }
 
-            if(this.state !== "DISCONNECTED") {
+            if (this.state !== "DISCONNECTED") {
                 return reject(new Error("Client is already connected"))
             }
             this.state = "CONNECTED"
@@ -109,16 +128,16 @@ export class Client extends EventEmitter {
 
             this.ws = new WsClient(this.token, this.intents)
             this.ws.connect()
-    
+
             this.heartbeat = register("step", () => {
                 if (!this.ready) return
                 this.ws.send(JSON.stringify({ "op": 1, "d": this.s }))
             })
-    
+
             register("gameUnload", () => {
                 this.ws.close()
             })
-    
+
             this.ws.on("_message", (message) => {
                 this.messageHandler.handle(message)
             })
@@ -138,7 +157,7 @@ export class Client extends EventEmitter {
     send_message(message, channel_id, options = {}) {
         let message_payload = this.payloadCreator.create(
             ENDPOINTS.SEND_MESSAGE(channel_id),
-            'POST', 
+            'POST',
             {
                 "content": message,
                 "tts": options.tts || false
@@ -168,8 +187,8 @@ export class Client extends EventEmitter {
     delete_message(message, options = {}) {
         let delete_message_payload = this.payloadCreator.create(
             ENDPOINTS.DELETE_MESSAGE(message.channel.id, message.id),
-            'DELETE', 
-            null, 
+            'DELETE',
+            null,
             false
         )
 

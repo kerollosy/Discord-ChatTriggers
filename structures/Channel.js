@@ -1,3 +1,6 @@
+import Collection from "../util/Collection";
+
+
 /**
  * Represents a text channel in Discord.
  */
@@ -15,10 +18,23 @@ export class Channel {
         this.id = data.id;
 
         /**
+         * The type of the channel.
+         * @type {int}
+         */
+        this.type = data.type;
+
+        /**
          * The Discord bot client associated with the channel.
          * @type {Client}
          */
         this.client = client;
+
+        /**
+         * A collection of messages in the channel.
+         * @type {Collection}
+         */
+        this.messages = new Collection()
+
 
         for (let key in data) {
             if (!this.hasOwnProperty(key)) {

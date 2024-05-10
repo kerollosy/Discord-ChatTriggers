@@ -18,19 +18,14 @@ export class Payload {
 
     /**
      * Checks if an Object is a Discord Embed.
+     * * NOTE: "title" is a required field for an object to be considered a Discord Embed.
      * @param {Object} embed - The object to check.
      * @returns {Boolean} Whether the object is a Discord Embed.
      */
     isDiscordEmbed(embed) {
-        const keys = ['title', 'description', 'url', 'color', 'fields', 'author', 'footer', 'timestamp', 'image', 'thumbnail'];
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            if (key in embed) {
-                return true;
-            }
-        }
-        return false;
+        return "title" in embed ? true : false;
     }
+
 
     /**
      * Create a request payload.
@@ -74,7 +69,6 @@ export class Payload {
         body["tts"] = Boolean(options.tts)
         body["embeds"] = options.embeds?.map(embed => {
             if (this.isDiscordEmbed(embed)) {
-                console.log('Discord Embed')
                 return embed
             }
         })

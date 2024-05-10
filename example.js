@@ -7,7 +7,15 @@ client.on("message", (message) => {
     if (message.author.bot) return
 
     if (message.content === '!ping') {
-        message.channel.send('Pong.');
+        message.channel.send(
+            {
+                "embeds": [
+                    {
+                        "title": "Pong!",
+                    }
+                ]
+            }
+        );
     } else if (message.content === `!server`) {
         message.channel.send(`This server's name is: ${message.guild.name}\nTotal members: ${message.guild.member_count}`);
     } else if (message.content === `!user-info`) {

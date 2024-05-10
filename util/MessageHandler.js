@@ -21,6 +21,8 @@ export class MessageHandler {
      * @param {string} message - The JSON-formatted message received from the Gateway.
      */
     handle(message) {
+        this.client.emit("debug", message);
+        
         let json = JSON.parse(message);
         let op = json.op;
         let t = json.t;

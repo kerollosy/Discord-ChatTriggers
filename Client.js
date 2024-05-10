@@ -52,7 +52,7 @@ export class Client extends EventEmitter {
          * The bitwise value representing the bot's intents.
          * @type {number}
          */
-        this.intents = options.intents || 3276799
+        this.intents = options.intents || 0
 
         /**
          * Indicates whether the client is ready and connected to Discord.

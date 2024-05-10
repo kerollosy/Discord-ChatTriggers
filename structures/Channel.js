@@ -45,11 +45,13 @@ export class Channel {
 
     /**
      * Sends a message to the channel.
-     * @param {string} content - The content of the message.
-     * @param {Object} options - The options for sending the message (optional).
-     * @param {boolean} options.tts - Whether the message should be sent as text-to-speech (TTS). Defaults to false.
+     * @see https://discohook.org/
+     * @param {string|Object} options The options for sending the message. If a string, it is the content of the message. If an object, it can have the following properties:
+     *   - embeds (Array<Object>): An array of Discord Embeds to include in the message.
+     *   - tts (Boolean): Whether the message should be read aloud using text-to-speech.
+     *   - content (string): The text content of the message.
      */
-    send(content, options = {}) {
-        this.client.send_message(content, this.id, options);
+    send(options) {
+        this.client.send_message(options, this.id);
     }
 }

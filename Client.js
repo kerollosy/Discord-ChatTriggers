@@ -148,20 +148,21 @@ export class Client extends EventEmitter {
 
     /**
      * Sends a message to a Discord channel.
-     * @param {string} message - The content of the message to be sent.
+     * @see https://discohook.org/
+     * @param {string|Object} options The options for sending the message. If a string, it is the content of the message. If an object, it can have the following properties:
+     *   - embeds (Array<Object>): An array of Discord Embeds to include in the message.
+     *   - tts (Boolean): Whether the message should be read aloud using text-to-speech.
+     *   - content (string): The text content of the message.
      * @param {string} channel_id - The ID of the Discord channel where the message will be sent.
-     * @param {Object} options - Additional options for sending the message.
-     * @param {boolean} options.tts - Whether the message should be sent as text-to-speech (TTS). Defaults to false.
      * @returns {Promise<Message>} A Promise that resolves with the sent message if successful.
      */
-    send_message(message, channel_id, options = {}) {
+    send_message(options, channel_id) {
+        let body = this.payloadCreator.resolve(options)
+
         let message_payload = this.payloadCreator.create(
             ENDPOINTS.SEND_MESSAGE(channel_id),
             'POST',
-            {
-                "content": message,
-                "tts": options.tts || false
-            },
+            body,
             true
         )
 
@@ -171,7 +172,7 @@ export class Client extends EventEmitter {
                     return resolve(new Message(response, this))
                 })
                 .catch(function (error) {
-                    console.error(`An error occured while sending message "${message}": ${JSON.stringify(error)}`)
+                    console.error(`An error occured while sending message "${body.content}": ${JSON.stringify(error)}`)
                     return reject(error)
                 })
         })

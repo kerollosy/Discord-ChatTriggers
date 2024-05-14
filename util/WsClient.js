@@ -15,6 +15,13 @@ export class WsClient extends EventEmitter {
      */
     constructor(token, intents, url = GATEWAY_URL) {
         super();
+
+        /**
+         * The URL of the Discord Gateway.
+         * @type {string}
+         */
+        this.url = url;
+
         /**
          * An instance of the WebSocket for communicating with the Discord Gateway.
          * @type {WebSocket}
@@ -39,6 +46,7 @@ export class WsClient extends EventEmitter {
      */
     connect() {
         this.ws.onOpen = () => {
+            if(this.url != GATEWAY_URL) return
             this.sendIdentificationPayload()
         }
 

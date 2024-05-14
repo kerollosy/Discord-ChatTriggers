@@ -11,14 +11,15 @@ export class WsClient extends EventEmitter {
      * Creates a new WsClient instance.
      * @param {string} token - The bot token for authentication.
      * @param {number} intents - The bitwise value representing the bot's intents. (https://discord-intents-calculator.vercel.app/)
+     * @param {string} [url=GATEWAY_URL] - The URL of the Discord Gateway.
      */
-    constructor(token, intents) {
+    constructor(token, intents, url = GATEWAY_URL) {
         super();
         /**
          * An instance of the WebSocket for communicating with the Discord Gateway.
          * @type {WebSocket}
          */
-        this.ws = new WebSocket(GATEWAY_URL);
+        this.ws = new WebSocket(url);
 
         /**
          * The bot token for authentication.
@@ -49,6 +50,10 @@ export class WsClient extends EventEmitter {
 
         this.ws.onError = (error) => {
             console.error(`An error occured: ${error}`)
+        }
+
+        this.ws.onClose = (code, reason, remote) => {
+            this.emit("close", code)
         }
     }
 

@@ -30,6 +30,21 @@ export class MessageHandler {
         this.client.s = json.s;
 
         switch (op) {
+            // 0: TODO: Dispatch
+            case 0:
+                break;
+            // 1: Heartbeat
+            case 1:
+                this.client.ws.send(JSON.stringify({ "op": 1, "d": this.client.s }));
+                break;
+            // 7: TODO: Reconnect
+            case 7:
+                console.log("RECONNECT NOW")
+                break;
+            // 9: TODO: Invalid session
+            case 9:
+                console.log("Invalid session, reidentifying");
+                break;
             // 10: Hello
             case 10:
                 let heartbeat_interval = data.heartbeat_interval;
@@ -38,10 +53,6 @@ export class MessageHandler {
             // 11: Heartbeat ACK
             case 11:
                 this.client.emit("debug", "Heartbeat ACK");
-                break;
-            // 1: Heartbeat
-            case 1:
-                this.client.ws.send(JSON.stringify({ "op": 1, "d": this.client.s }));
                 break;
         }
 

@@ -59,6 +59,8 @@ export class MessageHandler {
                         break;
 
                     case PACKETS.READY:
+                        this.client.session_id = data.session_id; // I am grabbing your session id and stealing all your coins rawr
+                        this.client.resume_gateway_url = data.resume_gateway_url
                         this.client.ready = true;
                         this.client.readyTime = Date.now();
                         this.client.user = this.client.users.set(data.id, new User(data.user, this.client));
@@ -97,7 +99,6 @@ export class MessageHandler {
                 this.client.emit("debug", "Heartbeat ACK");
                 break;
         }
-
     }
 }
 

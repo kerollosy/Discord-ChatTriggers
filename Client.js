@@ -95,6 +95,19 @@ export class Client extends EventEmitter {
          * @type {Collection<string, Channel>}
          */
         this.channels = new Collection()
+
+        /**
+         * The session ID used to reconnect
+         * @type {String|null}
+         */
+        this.session_id = null
+
+        /**
+         * The URL to resume the gateway connection.
+         *  @type {String|null}
+         */
+        this.resume_gateway_url = null
+
     }
 
     /**

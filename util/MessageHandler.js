@@ -80,14 +80,11 @@ export class MessageHandler {
             case 1:
                 this.client.ws.send(JSON.stringify({ "op": 1, "d": this.client.s }));
                 break;
-            // 7: TODO: Reconnect
+            // 7: Reconnect
+            // 9: Invalid session
             case 7:
-                console.log("RECONNECT NOW")
-                break;
-            // 9: TODO: Invalid session
             case 9:
-                console.log("Invalid session, reidentifying");
-                this.client.ws.send(JSON.stringify({ "op": 2, "d": { "token": this.client.token, "intents": this.client.intents } }));
+                this.client.ws.emit("close", -1)
                 break;
             // 10: Hello
             case 10:

@@ -155,6 +155,15 @@ export class Client extends EventEmitter {
                 this.messageHandler.handle(message)
             })
 
+            this.ws.on("close", (code) => {
+                // https://discord.com/developers/docs/topics/gateway#resuming
+                this.emit("debug", `Connection closed with code ${code}`)
+                this.emit("debug", "Attempting to reconnect...");
+                this.state = "DISCONNECTED"
+                this.ws.close()
+                this.login()
+            })
+
             return resolve(this.token)
         })
     }

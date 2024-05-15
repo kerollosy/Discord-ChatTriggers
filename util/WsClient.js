@@ -46,7 +46,6 @@ export class WsClient extends EventEmitter {
      */
     connect() {
         this.ws.onOpen = () => {
-            if(this.url != GATEWAY_URL) return
             this.sendIdentificationPayload()
         }
 
@@ -75,7 +74,7 @@ export class WsClient extends EventEmitter {
                 "token": this.token,
                 "intents": this.intents,
                 "properties": {
-                    "os": 'linux',
+                    "os": "linux",
                     "browser": "Discord.mc",
                     "device": "Discord.mc"
                 }

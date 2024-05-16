@@ -157,6 +157,7 @@ export class Client extends EventEmitter {
 
             this.ws.on("close", (code) => {
                 // https://discord.com/developers/docs/topics/gateway#resuming
+                if(code == 1000) return // When the connection is closed with no errors it closes with code 1000
                 this.emit("debug", `Connection closed with code ${code}`)
                 this.emit("debug", "Attempting to reconnect...");
                 this.state = "DISCONNECTED"

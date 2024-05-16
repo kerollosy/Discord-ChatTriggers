@@ -108,6 +108,25 @@ export class Client extends EventEmitter {
          */
         this.resume_gateway_url = null
 
+        /**
+         * Indicates whether the client is currently reconnecting to the gateway.
+         */
+        this.reconnecting = false;
+
+        /**
+         * The heartbeat interval for the client.
+         */
+        this.heartbeat = register("step", () => {
+            if (!this.ready) return
+            this.ws.send(JSON.stringify({ "op": 1, "d": this.s }))
+        })
+
+        /**
+         * Registers an event listener to close the websocket on gameUnload event.
+         */
+        register("gameUnload", () => {
+            this.ws.close()
+        })
     }
 
     /**
@@ -119,6 +138,53 @@ export class Client extends EventEmitter {
     }
 
     /**
+     * Starts a new WebSocket connection.
+     * @param {string} [token] - The token to start the connection with.
+     * @throws {Error} If no token is provided.
+     */
+    startNewConnection(token = this.token) {
+        if (!token) {
+            throw new Error("No token provided");
+        }
+
+        if (this.ready) {
+            throw new Error("Client is already connected")
+        }
+
+        if (this.ws) {
+            this.ws.close();
+            this.ws = null;
+        }
+
+        this.ws = new WsClient(token, this.intents);
+        this.ws.connect();
+
+        this.ws.on("_message", (message) => {
+            this.messageHandler.handle(message);
+        });
+
+        this.ws.on("close", (code) => {
+            if (code == 1000) return // When the connection is closed with no errors it closes with code 1000
+            if (this.reconnecting) return
+
+            this.reconnecting = true;
+            this.ready = false
+            const reconnection_trigger = register("step", () => {
+                // console.log(this.ready)
+                this.login()
+                if (this.ready) {
+                    reconnection_trigger.unregister()
+                }
+            }).setDelay(5)
+
+            this.emit("debug", `Connection closed with code ${code}`);
+            this.emit("debug", "Attempting to reconnect...");
+            this.startNewConnection(token);
+
+        });
+    }
+
+    /**
      * Logs the client in using a token.
      * @param {string} [token] - The token to log in with.
      * @returns {Promise<string>} A promise that resolves with the token if successful.
@@ -126,46 +192,14 @@ export class Client extends EventEmitter {
      */
     login(token = this.token) {
         return new Promise((resolve, reject) => {
-            if (!token) {
-                return reject(new Error("No token provided"))
+            try {
+                this.token = token
+                this.payloadCreator = new Payload(this.token)
+                this.startNewConnection(token)
+                return resolve(this.token)
+            } catch (error) {
+                reject(error)
             }
-
-            if (this.state !== "DISCONNECTED") {
-                return reject(new Error("Client is already connected"))
-            }
-            this.state = "CONNECTED"
-
-            this.token = token
-
-            this.payloadCreator = new Payload(this.token)
-
-            this.ws = new WsClient(this.token, this.intents)
-            this.ws.connect()
-
-            this.heartbeat = register("step", () => {
-                if (!this.ready) return
-                this.ws.send(JSON.stringify({ "op": 1, "d": this.s }))
-            })
-
-            register("gameUnload", () => {
-                this.ws.close()
-            })
-
-            this.ws.on("_message", (message) => {
-                this.messageHandler.handle(message)
-            })
-
-            this.ws.on("close", (code) => {
-                // https://discord.com/developers/docs/topics/gateway#resuming
-                if(code == 1000) return // When the connection is closed with no errors it closes with code 1000
-                this.emit("debug", `Connection closed with code ${code}`)
-                this.emit("debug", "Attempting to reconnect...");
-                this.state = "DISCONNECTED"
-                this.ws.close()
-                this.login()
-            })
-
-            return resolve(this.token)
         })
     }
 

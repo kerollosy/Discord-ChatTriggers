@@ -61,6 +61,7 @@ export class MessageHandler {
                     case PACKETS.READY:
                         this.client.session_id = data.session_id; // I am grabbing your session id and stealing all your coins rawr
                         this.client.resume_gateway_url = data.resume_gateway_url
+                        this.client.reconnecting = false;
                         this.client.ready = true;
                         this.client.readyTime = Date.now();
                         this.client.user = this.client.users.set(data.id, new User(data.user, this.client));
@@ -84,7 +85,7 @@ export class MessageHandler {
             // 9: Invalid session
             case 7:
             case 9:
-                this.client.ws.emit("close", -1)
+                this.client.ws.emit("close", -5)
                 break;
             // 10: Hello
             case 10:

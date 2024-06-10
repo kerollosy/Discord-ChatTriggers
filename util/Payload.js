@@ -58,7 +58,7 @@ export class Payload {
      * @param {string|Object} options - The content of the message to be sent.
      * @returns {Object} The resolved payload.
      */
-    resolve(options) {
+    resolveMessage(options) {
         let body = {}
 
         if (typeof options == 'string') {

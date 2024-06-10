@@ -214,7 +214,7 @@ export class Client extends EventEmitter {
      * @returns {Promise<Message>} A Promise that resolves with the sent message if successful.
      */
     send_message(options, channel_id) {
-        let body = this.payloadCreator.resolve(options)
+        let body = this.payloadCreator.resolveMessage(options)
 
         let message_payload = this.payloadCreator.create(
             ENDPOINTS.SEND_MESSAGE(channel_id),

@@ -210,8 +210,8 @@ export class Client extends EventEmitter {
      * @param {Object} body - The body of the request.
      * @returns {Promise<any>} A promise that resolves with the response if the request is successful.
      */
-    request(endpoint, method, body, headers = {}) {
-        let payload = this.payloadCreator.create(endpoint, method, body, headers)
+    send_request(endpoint, method, body, headers = {}) {
+        let payload = this.payloadCreator.create(endpoint, method, body, true, headers)
 
         return new Promise((resolve, reject) => {
             request(payload)
@@ -219,7 +219,6 @@ export class Client extends EventEmitter {
                     return resolve(response)
                 })
                 .catch(function (error) {
-                    console.error(`An error occured while sending request to "${endpoint}": ${JSON.stringify(error)}`)
                     return reject(error)
                 })
         })

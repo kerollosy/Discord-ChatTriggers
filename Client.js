@@ -204,6 +204,28 @@ export class Client extends EventEmitter {
     }
 
     /**
+     * Sends a request to an endpoint.
+     * @param {string} endpoint - The endpoint to send the request to.
+     * @param {string} method - The HTTP method to use for the request.
+     * @param {Object} body - The body of the request.
+     * @returns {Promise<any>} A promise that resolves with the response if the request is successful.
+     */
+    request(endpoint, method, body, headers = {}) {
+        let payload = this.payloadCreator.create(endpoint, method, body, headers)
+
+        return new Promise((resolve, reject) => {
+            request(payload)
+                .then(function (response) {
+                    return resolve(response)
+                })
+                .catch(function (error) {
+                    console.error(`An error occured while sending request to "${endpoint}": ${JSON.stringify(error)}`)
+                    return reject(error)
+                })
+        })
+    }
+
+    /**
      * Sends a message to a Discord channel.
      * @see https://discohook.org/
      * @param {string|Object} options The options for sending the message. If a string, it is the content of the message. If an object, it can have the following properties:

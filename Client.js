@@ -210,8 +210,8 @@ export class Client extends EventEmitter {
      * @param {Object} body - The body of the request.
      * @returns {Promise<any>} A promise that resolves with the response if the request is successful.
      */
-    send_request(endpoint, method, body, headers = {}) {
-        let payload = this.payloadCreator.create(endpoint, method, body, true, headers)
+    send_request(endpoint, method, body, headers = {}, json = true) {
+        let payload = this.payloadCreator.create(endpoint, method, body, json, headers)
 
         return new Promise((resolve, reject) => {
             request(payload)

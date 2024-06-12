@@ -58,10 +58,10 @@ export class Channel {
         let body = this.client.payloadCreator.resolveMessage(options);
 
         return new Promise((resolve, reject) => {
-            this.client.send_request(
-                ENDPOINTS.SEND_MESSAGE(this.id),
-                "POST",
-                body
+            this.client.send_request(ENDPOINTS.SEND_MESSAGE(this.id), "POST",
+                {
+                    body: body
+                }
             ).then((response) => {
                 return resolve(new Message(response, this.client));
             }).catch(error => {

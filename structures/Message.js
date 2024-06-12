@@ -115,12 +115,10 @@ export class Message {
      */
     delete() {
         return new Promise((resolve, reject) => {
-            this.client.send_request(
-                ENDPOINTS.DELETE_MESSAGE(this.channel.id, this.id),
-                "DELETE",
-                {},
-                {},
-                false
+            this.client.send_request(ENDPOINTS.DELETE_MESSAGE(this.channel.id, this.id), "DELETE",
+                {
+                    json: false
+                }
             ).then((response) => {
                 this.channel.messages.delete(this.id)
                 return resolve(response)

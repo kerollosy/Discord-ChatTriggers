@@ -205,13 +205,15 @@ export class Client extends EventEmitter {
      * Sends a request to an endpoint.
      * @param {string} endpoint - The endpoint to send the request to.
      * @param {string} method - The HTTP method to use for the request.
-     * @param {Object} body - The body of the request.
-     * @param {Object} [headers={}] - Additional headers for the request.
-     * @param {boolean} [json=true] - Whether the request should be sent as JSON.
+     * @param {Object} options - Optional options
      * @returns {Promise<any>} A promise that resolves with the response if the request is successful.
      */
-    send_request(endpoint, method, body, headers = {}, json = true) {
-        let payload = this.payloadCreator.create(endpoint, method, body, json, headers)
+    send_request(endpoint, method, options={}) {
+        if(options.reason) {
+            options.headers['X-Audit-Log-Reason'] = encodeURIComponent(options.reason)
+        }
+        
+        let payload = this.payloadCreator.create(endpoint, method, options.body, options.json, options.headers)
 
         return new Promise((resolve, reject) => {
             request(payload)

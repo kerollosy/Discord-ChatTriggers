@@ -33,7 +33,7 @@ export class Channel {
 
         /**
          * A collection of messages in the channel.
-         * @type {Collection}
+         * @type {Collection<Message>}
          */
         this.messages = new Collection()
 

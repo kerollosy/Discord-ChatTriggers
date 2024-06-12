@@ -6,6 +6,7 @@ exports.Collection = void 0;
  * A Map with additional utility methods. This is used throughout discord.js rather than Arrays for anything that has
  * an ID, for significantly improved performance and ease-of-use.
  * @extends {Map}
+ * @template T
  */
 class Collection extends Map {
     constructor(entries) {
@@ -26,6 +27,13 @@ class Collection extends Map {
          */
         Object.defineProperty(this, '_keyArray', { value: null, writable: true, configurable: true });
     }
+     /**
+     * @returns {T}
+     */
+     get(key) {
+        return super.get(key);
+    }
+
     set(key, value) {
         this._array = null;
         this._keyArray = null;

@@ -78,19 +78,19 @@ export class Client extends EventEmitter {
 
         /**
          * A collection of all users the client is aware of.
-         * @type {Collection<string, User>}
+         * @type {Collection<User>}
          */
         this.users = new Collection()
 
         /**
          * A collection of all guilds (servers) the client has access to.
-         * @type {Collection<string, Guild>}
+         * @type {Collection<Guild>}
          */
         this.guilds = new Collection()
 
         /**
          * A collection of all channels the client has access to.
-         * @type {Collection<string, Channel>}
+         * @type {Collection<Channel>}
          */
         this.channels = new Collection()
 

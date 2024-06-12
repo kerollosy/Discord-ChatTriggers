@@ -46,19 +46,19 @@ export class Guild {
 
         /**
          * Collection of members in the guild.
-         * @type {Collection}
+         * @type {Collection<Member>}
          */
         this.members = new Collection()
 
         /**
          * Collection of channels in the guild.
-         * @type {Collection}
+         * @type {Collection<Channel>}
          */
         this.channels = new Collection()
 
         /**
          * Collection of roles in the guild.
-         * @type {Collection}
+         * @type {Collection<Role>}
          */
         this.roles = new Collection()
 

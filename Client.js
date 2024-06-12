@@ -208,6 +208,8 @@ export class Client extends EventEmitter {
      * @param {string} endpoint - The endpoint to send the request to.
      * @param {string} method - The HTTP method to use for the request.
      * @param {Object} body - The body of the request.
+     * @param {Object} [headers={}] - Additional headers for the request.
+     * @param {boolean} [json=true] - Whether the request should be sent as JSON.
      * @returns {Promise<any>} A promise that resolves with the response if the request is successful.
      */
     send_request(endpoint, method, body, headers = {}, json = true) {
@@ -219,66 +221,6 @@ export class Client extends EventEmitter {
                     return resolve(response)
                 })
                 .catch(function (error) {
-                    return reject(error)
-                })
-        })
-    }
-
-    /**
-     * Sends a message to a Discord channel.
-     * @see https://discohook.org/
-     * @param {string|Object} options The options for sending the message. If a string, it is the content of the message. If an object, it can have the following properties:
-     *   - embeds (Array<Object>): An array of Discord Embeds to include in the message.
-     *   - tts (Boolean): Whether the message should be read aloud using text-to-speech.
-     *   - content (string): The text content of the message.
-     * @param {string} channel_id - The ID of the Discord channel where the message will be sent.
-     * @returns {Promise<Message>} A Promise that resolves with the sent message if successful.
-     */
-    send_message(options, channel_id) {
-        let body = this.payloadCreator.resolveMessage(options)
-
-        let message_payload = this.payloadCreator.create(
-            ENDPOINTS.SEND_MESSAGE(channel_id),
-            'POST',
-            body,
-            true
-        )
-
-        return new Promise((resolve, reject) => {
-            request(message_payload)
-                .then(function (response) {
-                    return resolve(new Message(response, this))
-                })
-                .catch(function (error) {
-                    console.error(`An error occured while sending message "${body.content}": ${JSON.stringify(error)}`)
-                    return reject(error)
-                })
-        })
-    }
-
-    /**
-     * Deletes a message from a Discord channel.
-     * @param {Message} message - The message to be deleted.
-     * @param {Object} options - Additional options for deleting the message.
-     * @returns {Promise<any>} A promise that resolves with the response if the message is successfully deleted.
-     * @throws {Error} If an error occurs during the delete message process.
-     */
-    delete_message(message, options = {}) {
-        let delete_message_payload = this.payloadCreator.create(
-            ENDPOINTS.DELETE_MESSAGE(message.channel.id, message.id),
-            'DELETE',
-            null,
-            false
-        )
-
-        return new Promise((resolve, reject) => {
-            request(delete_message_payload)
-                .then(function (response) {
-                    message.channel.messages.delete(message.id)
-                    return resolve(response)
-                })
-                .catch(function (error) {
-                    console.error(`An error occured while deleting message "${message}": ${JSON.stringify(error)}`)
                     return reject(error)
                 })
         })

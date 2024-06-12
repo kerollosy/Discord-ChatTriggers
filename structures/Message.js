@@ -1,5 +1,6 @@
 import { User } from "./User";
-
+import { ENDPOINTS } from "../util/Constants";
+import { Promise } from "../../PromiseV2"
 
 /**
  * Represents a message in Discord.
@@ -113,7 +114,21 @@ export class Message {
      * @returns {Promise<void>} A promise that resolves with the response if the message is successfully deleted.
      */
     delete() {
-        return this.client.delete_message(this);
+        return new Promise((resolve, reject) => {
+            this.client.send_request(
+                ENDPOINTS.DELETE_MESSAGE(this.channel.id, this.id),
+                "DELETE",
+                {},
+                {},
+                false
+            ).then((response) => {
+                this.channel.messages.delete(this.id)
+                return resolve(response)
+            }).catch((error) => {
+                console.error(`An error occured while deleting message "${this.content}": ${JSON.stringify(error)}`)
+                return reject(error)
+            })
+        })
     }
 
     /**

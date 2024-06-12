@@ -1,5 +1,7 @@
 import Collection from "../util/Collection";
-
+import { ENDPOINTS } from "../util/Constants";
+import { Promise } from "../../PromiseV2"
+import { Message } from "./Message";
 
 /**
  * Represents a text channel in Discord.
@@ -50,8 +52,22 @@ export class Channel {
      *   - embeds (Array<Object>): An array of Discord Embeds to include in the message.
      *   - tts (Boolean): Whether the message should be read aloud using text-to-speech.
      *   - content (string): The text content of the message.
+     * @returns {Promise<Message>} A Promise that resolves with the sent message if successful.
      */
     send(options) {
-        this.client.send_message(options, this.id);
+        let body = this.client.payloadCreator.resolveMessage(options);
+
+        return new Promise((resolve, reject) => {
+            this.client.send_request(
+                ENDPOINTS.SEND_MESSAGE(this.id),
+                "POST",
+                body
+            ).then((response) => {
+                return resolve(new Message(response, this.client));
+            }).catch(error => {
+                console.error(`An error occured while sending message "${body.content}": ${JSON.stringify(error)}`);
+                return reject(error);
+            });
+        });
     }
 }

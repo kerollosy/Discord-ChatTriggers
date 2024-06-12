@@ -1,6 +1,4 @@
 import request from "../requestV2"
-import { Message } from "./structures/Message";
-import { ENDPOINTS } from "./util/Constants";
 import { EventEmitter } from "./util/EventEmitter";
 import { WsClient } from "./util/WsClient";
 import { MessageHandler } from "./util/MessageHandler";

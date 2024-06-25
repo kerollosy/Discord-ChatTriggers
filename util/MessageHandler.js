@@ -2,6 +2,7 @@ import { Message } from "../structures/Message";
 import { User } from "../structures/User";
 import { Guild } from "../structures/Guild";
 import { PACKETS } from "./Constants";
+import { Channel } from "../structures/Channel";
 
 
 /**
@@ -74,6 +75,10 @@ export class MessageHandler {
 
                     case PACKETS.GUILD_CREATE:
                         this.client.guilds.set(data.id, new Guild(data, this.client));
+                        break;
+                    
+                    case PACKETS.CHANNEL_CREATE:
+                        this.client.channels.set(data.id, new Channel(data, this.client));
                         break;
                 }
                 break;

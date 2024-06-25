@@ -2,6 +2,7 @@ import Collection from "../util/Collection";
 import { ENDPOINTS } from "../util/Constants";
 import { Promise } from "../../PromiseV2"
 import { Message } from "./Message";
+import { Webhook } from "./Webhook";
 
 /**
  * Represents a text channel in Discord.
@@ -69,5 +70,35 @@ export class Channel {
                 return reject(error);
             });
         });
+    }
+
+    /**
+     * Creates a webhook in the channel.
+     * @param {string} name - The name of the webhook.
+     * @param {string} [avatar=null] - The avatar of the webhook.
+     * @param {string} [reason=null] - The reason for creating the webhook.
+     * @returns {Promise<Webhook>} A Promise that resolves with the created webhook if successful.
+     */
+    createWebhook({ name, avatar = null, reason = null }) {
+        if (typeof avatar == 'string' && !avatar.startsWith('data:')) {
+            avatar = resolveImage(avatar);
+        }
+
+        return new Promise((resolve, reject) => {
+            this.client.send_request(ENDPOINTS.CREATE_WEBHOOK(this.id), "POST",
+                {
+                    body: {
+                        name: name,
+                        avatar: avatar
+                    },
+                    reason: reason
+                }
+            ).then((response) => {
+                return resolve(new Webhook(response, this.client))
+            }).catch((error) => {
+                console.error(`An error occured while creating webhook "${name}": ${JSON.stringify(error)}`)
+                return reject(error)
+            })
+        })
     }
 }

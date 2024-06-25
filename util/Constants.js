@@ -8,6 +8,7 @@ export const USER_AGENT = `SIRENCE (www.chattriggers.com, ${CURRENT_VERSION})`;
 export const ENDPOINTS = {
     SEND_MESSAGE: (id) => `${DISCORD_API_URL}/channels/${id}/messages`,
     DELETE_MESSAGE: (channelId, messageId) => `${DISCORD_API_URL}/channels/${channelId}/messages/${messageId}`,
+    CREATE_WEBHOOK: (channelId) => `${DISCORD_API_URL}/channels/${channelId}/webhooks`
 }
 
 // https://discord.com/developers/docs/topics/gateway-events

@@ -84,4 +84,16 @@ export class Payload {
 
         return body
     }
+
+    /**
+     * Resolves an image to a data URI.
+     * @param {string} image - The image to resolve.
+     * @returns {string} The resolved image.
+     */
+    resolveImage(image) {
+        if (typeof image == 'string' && image.startsWith("data:")) return image;
+
+        const imageUri = convertToDataURI(image);
+        return imageUri;
+    }
 }

@@ -5,6 +5,7 @@ import { MessageHandler } from "./util/MessageHandler";
 import { Payload } from "./util/Payload";
 import { Promise } from "../PromiseV2"
 import { Collection } from "./util/Collection";
+import { Webhook } from "./structures/Webhook";
 
 
 /**
@@ -221,6 +222,24 @@ export class Client extends EventEmitter {
                     return resolve(response)
                 })
                 .catch(function (error) {
+                    return reject(error)
+                })
+        })
+    }
+
+    /**
+     * Gets a webhook by its URL.
+     * @param {string} url - The URL of the webhook to get.
+     * @returns {Promise<Webhook>} A promise that resolves with the webhook if successful.
+     */
+    getWebhook(url) {
+        return new Promise((resolve, reject) => {
+            this.send_request(url, "GET")
+                .then((response) => {
+                    return resolve(new Webhook(response, this))
+                })
+                .catch((error) => {
+                    console.error(`An error occured while getting webhook "${url}": ${JSON.stringify(error)}`)
                     return reject(error)
                 })
         })

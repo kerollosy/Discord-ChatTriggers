@@ -38,7 +38,7 @@ export class Client extends EventEmitter {
          * An instance of Payload for making API request payloads.
          * @type {Payload|null}
          */
-        this.payloadCreator = null
+        this.payloadCreator = new Payload()
 
         /**
          * The bot token for authentication.
@@ -192,7 +192,7 @@ export class Client extends EventEmitter {
         return new Promise((resolve, reject) => {
             try {
                 this.token = token
-                this.payloadCreator = new Payload(this.token)
+                this.payloadCreator.setToken(this.token)
                 this.startNewConnection(token)
                 return resolve(this.token)
             } catch (error) {
@@ -208,11 +208,11 @@ export class Client extends EventEmitter {
      * @param {Object} options - Optional options
      * @returns {Promise<any>} A promise that resolves with the response if the request is successful.
      */
-    send_request(endpoint, method, options={}) {
-        if(options.reason) {
+    send_request(endpoint, method, options = {}) {
+        if (options.reason) {
             options.headers['X-Audit-Log-Reason'] = encodeURIComponent(options.reason)
         }
-        
+
         let payload = this.payloadCreator.create(endpoint, method, options.body, options.json, options.headers)
 
         return new Promise((resolve, reject) => {

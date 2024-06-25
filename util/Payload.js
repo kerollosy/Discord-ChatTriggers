@@ -7,11 +7,9 @@ import { USER_AGENT } from './Constants';
 export class Payload {
     /**
      * Create a Payload object.
-     * @param {string} token - The token to be used for Authorization.
      */
-    constructor(token) {
+    constructor() {
         this.headers = {
-            'Authorization': 'Bot ' + token,
             "User-Agent": USER_AGENT
         };
     }
@@ -24,6 +22,17 @@ export class Payload {
      */
     isDiscordEmbed(embed) {
         return "title" in embed ? true : false;
+    }
+
+    /**
+     * Set the bot token for the payload.
+     * @param {string} token - The bot token.
+     */
+    setToken(token) {
+        this.headers = {
+            'Authorization': 'Bot ' + token,
+            "User-Agent": USER_AGENT
+        };
     }
 
 

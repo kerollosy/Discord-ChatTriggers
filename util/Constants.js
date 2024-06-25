@@ -22,5 +22,8 @@ export const PACKETS = {
     MESSAGE_CREATE: "MESSAGE_CREATE",
 
     // https://discord.com/developers/docs/topics/gateway-events#message-delete
-    MESSAGE_DELETE: "MESSAGE_DELETE"
+    MESSAGE_DELETE: "MESSAGE_DELETE",
+
+    // https://discord.com/developers/docs/topics/gateway-events#channel-create
+    CHANNEL_CREATE: "CHANNEL_CREATE"
 }

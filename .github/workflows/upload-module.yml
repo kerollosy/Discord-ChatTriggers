@@ -27,7 +27,8 @@ jobs:
 
         # Create module folder and move repo contents
         mkdir $module_folder
-        mv * $module_folder/
+        shopt -s extglob
+        cp -r !(discord) $module_folder/
         
         # Create zip file with the module folder
         zip -r $zip_filename $module_folder

@@ -39,9 +39,15 @@ jobs:
 
     - name: Authenticate
       run: |
-        curl -X POST https://chattriggers.com/api/account/login \
+        response=$(curl -X POST https://chattriggers.com/api/account/login \
           -d "username=${{ secrets.USERNAME }}" \
-          -d "password=${{ secrets.PASSWORD }}"
+          -d "password=${{ secrets.PASSWORD }}")
+
+        if [[ "$response" == *"Authentication failed."* ]]; then
+          echo "Authentication failed."
+          exit 1
+        fi
+        echo "$response"
 
     - name: Upload module
       run: |

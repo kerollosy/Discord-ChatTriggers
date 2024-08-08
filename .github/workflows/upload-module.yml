@@ -1,0 +1,53 @@
+name: Upload Module
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  upload-module:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up variables
+      run: |
+        echo "MODULE_NAME=discord" >> $GITHUB_ENV
+        echo "RELEASE_VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+        echo "MODULE_ID=1841" >> $GITHUB_ENV
+        echo "MOD_VERSION=2.2.1" >> $GITHUB_ENV
+
+    - name: Create module folder and zip file
+      run: |
+        module_folder="${{ env.MODULE_NAME }}"
+        version="${{ env.RELEASE_VERSION }}"
+        zip_filename="${module_folder}-${version}.zip"
+
+        # Create module folder and move repo contents
+        mkdir $module_folder
+        shopt -s extglob
+        cp -r !("$module_folder") $module_folder/
+        
+        # Create zip file with the module folder
+        zip -r $zip_filename $module_folder
+        rm -rf $module_folder
+
+        # Output the zip filename for later use
+        echo "zip_filename=$zip_filename" >> $GITHUB_ENV
+
+    - name: Authenticate
+      run: |
+        curl -X POST https://chattriggers.com/api/account/login \
+          -d "username=${{ secrets.USERNAME }}" \
+          -d "password=${{ secrets.PASSWORD }}"
+
+    - name: Upload module
+      run: |
+        curl -X POST https://chattriggers.com/api/modules/${{ env.MODULE_ID }}/releases \
+          -H "Content-Type: multipart/form-data" \
+          -F "releaseVersion=${{ env.RELEASE_VERSION }}" \
+          -F "modVersion=${{ env.MOD_VERSION }}" \
+          -F "changelog=${{ github.event.release.body }}" \
+          -F "module=@${{ env.zip_filename }}"

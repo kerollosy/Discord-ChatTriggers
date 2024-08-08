@@ -17,7 +17,7 @@ jobs:
         echo "MODULE_NAME=discord" >> $GITHUB_ENV
         echo "RELEASE_VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
         echo "MODULE_ID=1841" >> $GITHUB_ENV
-        echo "MOD_VERSION=2.2.1" >> $GITHUB_ENV
+        echo "MOD_VERSION=2.2.0" >> $GITHUB_ENV
 
     - name: Create module folder and zip file
       run: |
@@ -39,7 +39,7 @@ jobs:
 
     - name: Authenticate
       run: |
-        response=$(curl -X POST https://chattriggers.com/api/account/login \
+        response=$(curl -c cookies.txt -X POST https://chattriggers.com/api/account/login \
           -d "username=${{ secrets.USERNAME }}" \
           -d "password=${{ secrets.PASSWORD }}")
 
@@ -51,7 +51,7 @@ jobs:
 
     - name: Upload module
       run: |
-        curl -X POST https://chattriggers.com/api/modules/${{ env.MODULE_ID }}/releases \
+        curl -b cookies.txt -X POST https://chattriggers.com/api/modules/${{ env.MODULE_ID }}/releases \
           -H "Content-Type: multipart/form-data" \
           -F "releaseVersion=${{ env.RELEASE_VERSION }}" \
           -F "modVersion=${{ env.MOD_VERSION }}" \

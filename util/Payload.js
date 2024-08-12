@@ -15,16 +15,6 @@ export class Payload {
     }
 
     /**
-     * Checks if an Object is a Discord Embed.
-     * * NOTE: "title" is a required field for an object to be considered a Discord Embed.
-     * @param {Object} embed - The object to check.
-     * @returns {Boolean} Whether the object is a Discord Embed.
-     */
-    isDiscordEmbed(embed) {
-        return "title" in embed ? true : false;
-    }
-
-    /**
      * Set the bot token for the payload.
      * @param {string} token - The bot token.
      */
@@ -76,11 +66,7 @@ export class Payload {
 
         body["content"] = options.content
         body["tts"] = Boolean(options.tts)
-        body["embeds"] = options.embeds?.map(embed => {
-            if (this.isDiscordEmbed(embed)) {
-                return embed
-            }
-        })
+        body["embeds"] = options.embeds 
 
         return body
     }

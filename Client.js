@@ -214,7 +214,7 @@ export class Client extends EventEmitter {
             options.headers['X-Audit-Log-Reason'] = encodeURIComponent(options.reason)
         }
 
-        let payload = this.payloadCreator.create(endpoint, method, options.body, options.json, options.headers)
+        let payload = this.payloadCreator.create(endpoint, method, options.body, options.json, options.headers, options.files)
 
         return new Promise((resolve, reject) => {
             request(payload)

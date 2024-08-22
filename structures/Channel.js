@@ -53,15 +53,17 @@ export class Channel {
      *   - embeds (Array<Object>): An array of Discord Embeds to include in the message.
      *   - tts (Boolean): Whether the message should be read aloud using text-to-speech.
      *   - content (string): The text content of the message.
+     *   - files (Array<string>): An array of file paths to include in the message.
      * @returns {Promise<Message>} A Promise that resolves with the sent message if successful.
      */
     send(options) {
-        let body = this.client.payloadCreator.resolveMessage(options);
+        let [body, files] = this.client.payloadCreator.resolveMessage(options);
 
         return new Promise((resolve, reject) => {
             this.client.send_request(ENDPOINTS.SEND_MESSAGE(this.id), "POST",
                 {
-                    body: body
+                    body: body,
+                    files: files
                 }
             ).then((response) => {
                 return resolve(new Message(response, this.client));

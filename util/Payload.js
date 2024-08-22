@@ -10,7 +10,8 @@ export class Payload {
      */
     constructor() {
         this.headers = {
-            "User-Agent": USER_AGENT
+            "User-Agent": USER_AGENT,
+            "Content-Type": "application/json"
         };
     }
 
@@ -20,11 +21,10 @@ export class Payload {
      */
     setToken(token) {
         this.headers = {
+            ...this.headers,
             'Authorization': 'Bot ' + token,
-            "User-Agent": USER_AGENT
         };
     }
-
 
     /**
      * Create a request payload.
@@ -66,7 +66,7 @@ export class Payload {
 
         body["content"] = options.content
         body["tts"] = Boolean(options.tts)
-        body["embeds"] = options.embeds 
+        body["embeds"] = options.embeds
 
         return body
     }

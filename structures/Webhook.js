@@ -30,12 +30,13 @@ export class Webhook {
     }
 
     send(options) {
-        let body = this.client.payloadCreator.resolveMessage(options);
+        let [body, files] = this.client.payloadCreator.resolveMessage(options);
 
         return new Promise((resolve, reject) => {
             this.client.send_request(this.url, "POST",
                 {
                     body: body,
+                    files: files,
                     json: false
                 }
             ).then((response) => {

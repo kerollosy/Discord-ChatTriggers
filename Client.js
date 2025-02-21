@@ -10,6 +10,7 @@ import { Webhook } from "./structures/Webhook";
 
 /**
  * Represents a client that connects to the Discord API.
+ * @type {typeof import("./Client")}
  * @extends EventEmitter
  */
 export class Client extends EventEmitter {

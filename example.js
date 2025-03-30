@@ -1,7 +1,7 @@
 import DiscordClient from "./index";
 const TOKEN = "DISCORD_BOT_TOKEN";
 
-let client = new DiscordClient();
+let client = new DiscordClient({intents: 3276799});
 
 client.on("message", (message) => {
     if (message.author.bot) return

@@ -91,4 +91,4 @@ client.login("token");
 ```
 
 ## Help
-If you are experiencing any problems or you just can't get started with the module, don't hesitate to dm me on discord: sirence11
+If you are experiencing any problems or you just can't get started with the module, don't hesitate to dm me on discord: kerollosy
